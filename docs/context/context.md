@@ -8,14 +8,31 @@
 
 LAYOUT_WITH_LEGEND()
 
-Person(pbc, "Personal Banking Customer", "A customer of the bank, with personal bank accounts.")
-System(ibs, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")
-System_Ext(es, "E-mail system", "The internal Microsoft Exchange e-mail system.")
-System_Ext(mbs, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
+Person(usr, "Пользователь", "Посетитель сайта конференции, не прошедший регистрацию и аутентификацию")
+Person(prt, "Участник", "Человек, который посещает конференцию для того, чтобы послушать доклады и пообщаться с другими специсалистами")
+Person(spk, "Спикер", "Участник, который планирует выступление на конференции с докладом")
+Person(org, "Организатор", "Член организационного комитета, который отвечает за организацию и проведение конференции в целом")
+Person(rvw, "Рецензент", "Член программного комитета, который отвечает за наполнение конференции, актуальность и тематический состав докладом")
 
-Rel(pbc, ibs, "Uses")
-Rel(es, pbc, "Sends e-mails to")
-Rel(ibs, es, "Sends e-mails", "SMTP")
-Rel(ibs, mbs, "Uses")
+System(plf, "Площадка конференции", "Платформа для проведения конференции helloconf.mts.ru")
+System_Ext(ytb, "Видеохостинг", "Внешняя система, которая осуществляет стриминг конференции, а также предоставляет доступ к записям докладом")
+
+Rel(usr, plf, "Регистрация")
+Rel(plf, usr, "Информация о расписании")
+
+Rel(prt, plf, "Авторизация, подписка на уведомления, комментарии, обратная связь")
+Rel(plf, prt, "Информация о расписании и докладах, трансляция, комментарии, рассылка уведомлений")
+
+Rel(spk, plf, "Авторизация, загрузка доклада, подписка на уведомления, комментарии, обратная связь")
+Rel(plf, spk, "Информация о расписании и докладах, статус спикера, трансляция, комментарии, рассылка уведомлений")
+
+Rel(org, plf, "Управление расписанием")
+Rel(plf, org, "Список участников и спикеров, информация о расписании и докладах, уведомления, комментарии, обратная связь")
+
+Rel(rvw, plf, "Рецензирование комментарии к докладам")
+Rel(plf, rvw, "Доклады спикеров, уведомления")
+
+Rel(ytb, plf, "Организация трансляции докладов")
 @enduml
+
 ```

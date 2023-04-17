@@ -7,90 +7,153 @@
 
 ```plantuml
 @startuml
-' Логическая модель данных в варианте UML Class Diagram (альтернатива ER-диаграмме).
-namespace ShoppingCart {
+namespace helloconf {
+  class Conference {
+    id: string
+    name: string
+    dateStart: datetime
+    dateEnd: datetime
+    organisationCommittee: Organizer[]
+    programCommittee: Reviewer[]
+    participants: Participant[]
+    timetable: Timetable
+    feedbackList: Feedback[]
+    createdAt: datetime
+    updatedAt: datetime
+  }
 
- class ShoppingCart
- {
-  id : string
-  createDate : datetime
-  updateDate : datetime
-  customer : Customer
-  price : ShoppingCartPrice
-  cartItems : CartItem[]
- }
+  class User {
+    id: string
+    firstName: string
+    lastName: string
+    company: string
+    email: string
+    type: Role
+    createdAt: datetime
+    updatedAt: datetime
+  }
 
- class ShoppingCartPrice
- {
-  type : CartItemPrice
- }
- class CartItemPrice
- {
-  type : CartItemPriceType
- }
+  class Speaker {
+    report: Report
+    status: boolean
+  }
 
- enum CartPriceType
- {
-  total
-  grandTotal
-  offeringDiscount
-  couponsDiscount
- }
+  enum Role {
+    organizer
+    reviewer
+    participant
+    speaker
+  }
 
- class CartItem
- {
-  id : string
-  quantity : int
-  offering : Offering
-  relationship : CartItemRelationShip[]
-  price : CartItemPrice[]
-  status : CartItemStatus
- }
-
-  class Customer
- {
-  id : string
- }
- 
- class Offering
- {
-  id : string
-  isQuantifiable : boolean
-  actionType : OfferingActionType
-  validFor : ValidFor
- }
+  class Organizer {
+    conferenceLink: string
+  }
   
- class ProductSpecificationRef
- {
-  id : string
- }
- 
- ShoppingCart *-- "1..*" ShoppingCartPrice
- ShoppingCartPrice -- CartPriceType
- ShoppingCart *-- "*" CartItem
- CartItem *-- "*" CartItemPrice
- CartItemPrice -- CartPriceType
- CartItem *-- "1" Offering
- Offering *-- "1" ProductSpecificationRef
- Offering *-- "0..1" ProductConfiguration
- ShoppingCart *-- "1" Customer
+  class Reviewer {
+    expertThemes: Theme[]
+  }
+
+  class Participant {
+
+  }
+
+  class Timetable {
+    id: string
+    name: string
+    talkList: Talk[]
+    createdAt: datetime
+    updatedAt: datetime
+  }
+
+  class Talk {
+    id: string
+    title: string
+    author: Speaker
+    report: Report
+    start: datetime
+    end: datetime
+    translationLink: Translation
+    commentList: Comment[]
+    createdAt: datetime
+    updatedAt: datetime
+  }
+
+  class Report {
+    id: string
+    title: string
+    description: string
+    author: Speaker
+    status: string
+    reviewer: Reviewer
+    review: string
+    createdAt: datetime
+    updatedAt: datetime
+  }
+
+  class Theme {
+    id: string
+    name: string
+  }
+
+  class Feedback {
+    id: string
+    author: User
+    title: string
+    body: string
+    createdAt: datetime
+  }
+
+  class Comment {
+    id: string
+    author: User
+    body: string
+    createdAt: datetime
+  }
+
+  class Email {
+    id: string
+    from: string
+    to: User[]
+    subject: string
+    body: string
+    createdAt: datetime
+    updatedAt: datetime
+  }
+
+  User <|-- Speaker
+  User <|-- Participant
+  User <|-- Organizer
+  User <|-- Reviewer
+  User -- Role
+
+  Conference "1..*"*--"1..*" Organizer
+  Conference "1..*"*--"1..*" Reviewer
+  Conference "1..*"*--"0..*" Participant
+  Conference "1..*"*--"1" Timetable
+  Conference "1..*"*--"0..*" Feedback
+
+  Timetable "1..*"*--"1..*" Talk
+  Talk "1..*"*--"1..*" Report
+  Talk "1"*--"0..*" Comment
+
+  Report "1..*"*--"1..*" Theme
+  Reviewer "1..*"*--"1..*" Theme
+  Speaker "1"*--"1..*" Report
+
+  Reviewer --> Report: Рецензирует
+  Speaker --> Talk: Участвует в
+  Participant --> Talk: Участвует в
+  User --> Email: Получает расссылку
+  User --> Feedback: Оставляет
+  User --> Comment: Оставляет
 }
 
-namespace Ordering {
- ProductOrder *-- OrderItem
- OrderItem *-- Product
- Product *-- ProductSpecificationRef
- ProductOrder *-- Party
+namespace video_platform {
+  class Translation {
+
+  }
+  helloconf.Talk ..> Translation: ref
 }
 
-namespace ProductCatalog {
- ShoppingCart.ProductSpecificationRef ..> ProductSpecification : ref
- Ordering.ProductSpecificationRef ..> ProductSpecification : ref
-}
-
-namespace CX {
- ShoppingCart.Customer ..> Customer : ref
- Ordering.Party ..> Customer : ref
-}
 @enduml
 ```
