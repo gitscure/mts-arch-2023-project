@@ -18,21 +18,35 @@ Person(usr, "Пользователь")
 
 System_Boundary(conf, "helloconf.mts.ru") {
     Container(web, "Веб-приложение", "html, JavaScript, React", "Портал конференции")
-    Container(user_service, "User Service", "Java, Spring Boot", "Сервис обработки информации о пользователях", $tags = "microService")   
-    Container(timetable_service, "Timetable Service", "Java, Spring Boot", "Сервис управления расписанием", $tags = "microService") 
-    Container(email_service, "Email Service", "Java, Spring Boot", "Сервис e-mail рассылки", $tags = "microService")
-    Container(report_service, "Report Service", "Java, Spring Boot", "Сервис работы с докладами", $tags = "microService")
-    Container(review_service, "Review Service", "Java, Spring Boot", "Сервис работы с рецензиями", $tags = "microService")
-    Container(video_service, "Video Service", "Java, Spring Boot", "Сервис обработки видеотрансляций", $tags = "microService")
-    Container(notification_service, "Notification Service", "Java, Spring Boot", "Работы с уведомлениями", $tags = "microService")
+    Boundary(auth, "Управление профилем участника") {
+        Container(user_service, "User Service", "Java, Spring Boot", "Сервис обработки информации о пользователях", $tags = "microService")
+        ContainerDb(user_db, "User Catalog", "Apache Cassandra", "Хранение информации о пользователях", $tags = "storage")
+    }
 
-    ContainerDb(user_db, "User Catalog", "Apache Cassandra", "Хранение информации о пользователях", $tags = "storage")
-    ContainerDb(timetable_db, "Timetable Catalog", "Apache Cassandra", "Хранение информации о расписаниях конференций", $tags = "storage")
-    ContainerDb(email_db, "Email History", "PostgreSQL", "Хранение информации о выполненных рассылках", $tags = "storage")
-    ContainerDb(report_db, "Report Catalog", "Apache Cassandra", "Хранение информации о докладах", $tags = "storage")
-    ContainerDb(review_db, "Review Catalog", "Apache Cassandra", "Хранение информации о рецензиях", $tags = "storage")
-    ContainerDb(notification_db, "Notification Catalog", "Apache Cassandra", "Хранение уведомлений", $tags = "storage")
-    
+    Boundary(time, "Управление расписанием") {
+        Container(timetable_service, "Timetable Service", "Java, Spring Boot", "Сервис управления расписанием", $tags = "microService")
+        ContainerDb(timetable_db, "Timetable Catalog", "Apache Cassandra", "Хранение информации о расписаниях конференций, а также установленных уведомлениях пользователей", $tags = "storage")
+    }
+
+    Boundary(repo, "Работа с докладами и рецензиями") {
+        Container(report_service, "Report Service", "Java, Spring Boot", "Сервис работы с докладами и рецензиями", $tags = "microService")
+        ContainerDb(report_db, "Report Catalog", "Apache Cassandra", "Хранение информации о докладах и рецензиях", $tags = "storage")
+    }
+
+    Boundary(fbck, "Управление обращениями пользователей") {
+         Container(feedback_service, "Feedback Service", "Java, Spring Boot", "Сервис работы с обратной связью", $tags = "microService")
+         ContainerDb(feedback_db, "Feedback Catalog", "PostgreSQL", "Хранение обратной связи", $tags = "storage")
+    }
+
+    Boundary(trln, "Предоставление видеоконтента") {
+        Container(video_service, "Video Service", "Java, Spring Boot", "Сервис обработки видеотрансляций", $tags = "microService")
+    }
+
+    Boundary(noti, "Управление уведомлениями") {
+        Container(email_service, "Email Service", "Java, Spring Boot", "Сервис e-mail рассылки", $tags = "microService")
+        ContainerDb(email_db, "Email History", "PostgreSQL", "Хранение информации о выполненных рассылках", $tags = "storage")
+    }
+
     Container(message_bus, "Message Bus", "RabbitMQ", "Брокер сообщений")
 }
 
@@ -41,28 +55,25 @@ System_Ext(ytb, "Видеохостинг", "Внешняя система, ко
 Rel(usr, web, "Работа с порталом", "HTTPS")
 
 Rel(web, user_service, "Просмотр и данных о пользователе", "REST API")
-Rel(web, timetable_service, "Управление и просмотр расписания", "REST API")
-Rel(web, report_service, "Получение информации о докладах", "REST API")
-Rel(web, review_service, "Рецензирование докладов", "REST API")
-Rel(web, notification_service, "Установка уведомлений", "REST API")
+Rel(web, timetable_service, "Управление и просмотр расписания, установка уведомлений", "REST API")
+Rel(web, report_service, "Получение информации о докладах и рецензировании", "REST API")
 Rel(web, video_service, "Получение трансляции", "REST API")
+Rel(web, feedback_service, "Оставление обратной связи", "REST API")
 
 Rel(user_service, user_db, "Сохранение данных о пользователях", "CQL")
-Rel(timetable_service, timetable_db, "Сохранение данных о расписаниях", "CQL")
-Rel(email_service, email_db, "Сохранение данных о выполненных рассылках", "SQL")
-Rel(report_service, report_db, "Сохранение данных о докладах", "CQL")
-Rel(review_service, review_db, "Сохранение данных о рецензиях", "CQL")
-Rel(notification_service, notification_db, "Сохранение данных об уведомлениях", "CQL")
+Rel(timetable_service, timetable_db, "Сохранение данных о расписаниях, а также об уведомлениях", "CQL")
+Rel(email_service, email_db, "Сохранение данных о рассылках", "SQL")
+Rel(report_service, report_db, "Сохранение данных о докладах и рецензиях", "CQL")
+Rel(feedback_service, feedback_db, "Сохранение данных об обратной связи", "SQL")
 
 Rel(user_service, message_bus, "Отправка данных о пользователях", "AMPQ")
-Rel(timetable_service, message_bus, "Получение информации о пользователях, докладах, уведомлениях. Отправка данных о расписании", "AMPQ")
+Rel(timetable_service, message_bus, "Получение информации о пользователях, докладах. Отправка данных о расписании и уведомлениях", "AMPQ")
 Rel(email_service, message_bus, "Получение данных для рассылки", "AMPQ")
-Rel(report_service, message_bus, "Получение информации о пользователях, рецензиях. Отправка информации о докладах", "AMPQ")
-Rel(review_service, message_bus, "Получение информации о пользователях. Отправка рецензий", "AMPQ")
-Rel(notification_service, message_bus, "Получение информации о пользователях, расписании. Отправка данных для рассылки", "AMPQ")
+Rel(report_service, message_bus, "Получение информации о пользователях. Отправка информации о докладах и рецензиях", "AMPQ")
+Rel(feedback_service, message_bus, "Отправка информации об оставленной обратной связи", "AMPQ")
 
-Rel(web, video_service, "Получение видео", "HLS")
-Rel(video_service, ytb, "Трансляция выступлений", "HLS")
+Rel(web, video_service, "Получение видео, отправка и получение комментариев", "HLS, REST API")
+Rel(video_service, ytb, "Трансляция выступлений, комментарии", "HLS, REST API")
 
 SHOW_LEGEND()
 @enduml
