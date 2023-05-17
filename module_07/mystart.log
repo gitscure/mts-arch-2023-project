@@ -1,0 +1,88 @@
+without cache
+время 60 количество потоков 1 количество соединений 1
+Running 1m test @ http://localhost:8081/
+  1 threads and 1 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     2.25ms  338.71us  23.32ms   91.55%
+    Req/Sec   442.88     27.84   494.00     82.00%
+  Latency Distribution
+     50%    2.19ms
+     75%    2.33ms
+     90%    2.52ms
+     99%    3.12ms
+  26473 requests in 1.00m, 7.98MB read
+  Socket errors: connect 0, read 0, write 0, timeout 1
+Requests/sec:    440.91
+Transfer/sec:    136.06KB
+время 60 количество потоков 10 количество соединений 10
+Running 1m test @ http://localhost:8081/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    13.07ms    2.17ms  41.30ms   77.73%
+    Req/Sec    76.45      9.28   110.00     77.30%
+  Latency Distribution
+     50%   12.73ms
+     75%   13.86ms
+     90%   15.60ms
+     99%   20.46ms
+  45870 requests in 1.00m, 13.33MB read
+Requests/sec:    763.88
+Transfer/sec:    227.37KB
+время 60 количество потоков 50 количество соединений 50
+Running 1m test @ http://localhost:8081/
+  50 threads and 50 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    60.23ms   21.86ms 310.34ms   82.53%
+    Req/Sec    16.84      5.15    60.00     64.91%
+  Latency Distribution
+     50%   50.57ms
+     75%   58.75ms
+     90%   96.73ms
+     99%  119.66ms
+  50165 requests in 1.00m, 14.57MB read
+Requests/sec:    834.73
+Transfer/sec:    248.28KB
+with cache
+время 60 количество потоков 1 количество соединений 1
+Running 1m test @ http://localhost:8082/
+  1 threads and 1 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.39ms  291.56us  19.71ms   93.84%
+    Req/Sec   711.40     56.07   780.00     88.33%
+  Latency Distribution
+     50%    1.34ms
+     75%    1.44ms
+     90%    1.59ms
+     99%    2.11ms
+  42517 requests in 1.00m, 12.33MB read
+  Socket errors: connect 0, read 0, write 0, timeout 1
+Requests/sec:    708.17
+Transfer/sec:    210.24KB
+время 60 количество потоков 10 количество соединений 10
+Running 1m test @ http://localhost:8082/
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     5.70ms    1.05ms  29.33ms   74.29%
+    Req/Sec   175.43     16.55   222.00     81.07%
+  Latency Distribution
+     50%    5.63ms
+     75%    6.25ms
+     90%    6.96ms
+     99%    8.80ms
+  104983 requests in 1.00m, 30.61MB read
+Requests/sec:   1748.51
+Transfer/sec:    521.99KB
+время 60 количество потоков 50 количество соединений 50
+Running 1m test @ http://localhost:8082/
+  50 threads and 50 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    27.76ms   19.13ms 457.40ms   98.73%
+    Req/Sec    37.73      5.94   191.00     65.73%
+  Latency Distribution
+     50%   25.52ms
+     75%   28.92ms
+     90%   32.48ms
+     99%   49.31ms
+  112714 requests in 1.00m, 32.53MB read
+Requests/sec:   1875.52
+Transfer/sec:    554.20KB
