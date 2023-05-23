@@ -18,3 +18,5 @@
   - [Скрин-подтверждение заливки данных в MongoDB](/module_07/screen_import_mongodb.png), а также [скрипт заливки](./module_07/import_data.py)
   - [Результаты нагрузочного тестирования MongoDB, а также сравнение с MariaDB](./module_07/mariadb_vs_mongodb.md)
   - [Описание применения терминов со слайда 13](/module_07/mongodb_operations.md)
+- [[Модуль 08] Сервисы, реализующий паттерн Circuit Breaker](./module_08/)
+  - [Лог-файл](/module_08/service_main_homework.log)
