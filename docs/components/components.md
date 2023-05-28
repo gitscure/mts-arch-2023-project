@@ -18,6 +18,8 @@ Person(usr, "Пользователь")
 
 System_Boundary(conf, "helloconf.mts.ru") {
     Container(web, "Веб-приложение", "html, JavaScript, React", "Портал конференции")
+    Container(api, "API Gateway", "Java, Spring Cloud", "API Gateway")
+    Container(message_bus, "Message Bus", "RabbitMQ", "Брокер сообщений")
     Boundary(auth, "Управление профилем участника") {
         Container(user_service, "User Service", "Java, Spring Boot", "Сервис обработки информации о пользователях", $tags = "microService")
         ContainerDb(user_db, "User Catalog", "Apache Cassandra", "Хранение информации о пользователях", $tags = "storage")
@@ -46,19 +48,18 @@ System_Boundary(conf, "helloconf.mts.ru") {
         Container(email_service, "Email Service", "Java, Spring Boot", "Сервис e-mail рассылки", $tags = "microService")
         ContainerDb(email_db, "Email History", "PostgreSQL", "Хранение информации о выполненных рассылках", $tags = "storage")
     }
-
-    Container(message_bus, "Message Bus", "RabbitMQ", "Брокер сообщений")
 }
 
 System_Ext(ytb, "Видеохостинг", "Внешняя система, которая осуществляет стриминг конференции, а также предоставляет доступ к записям докладом")
 
-Rel(usr, web, "Работа с порталом", "HTTPS")
+Rel(usr, web, "Работа с порталом")
+Rel(web, api, "Request/Response", "REST API")
 
-Rel(web, user_service, "Просмотр и данных о пользователе", "REST API")
-Rel(web, timetable_service, "Управление и просмотр расписания, установка уведомлений", "REST API")
-Rel(web, report_service, "Получение информации о докладах и рецензировании", "REST API")
-Rel(web, video_service, "Получение трансляции", "REST API")
-Rel(web, feedback_service, "Оставление обратной связи", "REST API")
+Rel(api, user_service, "Просмотр и данных о пользователе", "REST API")
+Rel(api, timetable_service, "Управление и просмотр расписания, установка уведомлений", "REST API")
+Rel(api, report_service, "Получение информации о докладах и рецензировании", "REST API")
+Rel(api, video_service, "Получение трансляции", "REST API")
+Rel(api, feedback_service, "Оставление обратной связи", "REST API")
 
 Rel(user_service, user_db, "Сохранение данных о пользователях", "CQL")
 Rel(timetable_service, timetable_db, "Сохранение данных о расписаниях, а также об уведомлениях", "CQL")
@@ -72,7 +73,7 @@ Rel(email_service, message_bus, "Получение данных для расс
 Rel(report_service, message_bus, "Получение информации о пользователях. Отправка информации о докладах и рецензиях", "AMPQ")
 Rel(feedback_service, message_bus, "Отправка информации об оставленной обратной связи", "AMPQ")
 
-Rel(web, video_service, "Получение видео, отправка и получение комментариев", "HLS, REST API")
+Rel(api, video_service, "Получение видео, отправка и получение комментариев", "HLS, REST API")
 Rel(video_service, ytb, "Трансляция выступлений, комментарии", "HLS, REST API")
 
 SHOW_LEGEND()
